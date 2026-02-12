@@ -3,38 +3,696 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
-   <link rel="stylesheet" href="style.css">
+    <title>Inventory Pro - Management System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(102,126,234,0.2) 0%, transparent 50%);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 30px 40px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9em;
+            font-weight: 300;
+            margin-top: -5px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .stat-card:nth-child(1) .stat-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%);
+        }
+
+        .stat-card:nth-child(4) .stat-icon {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .stat-card h3 {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85em;
+            font-weight: 400;
+        }
+
+        .stat-change.positive {
+            color: #4ade80;
+        }
+
+        .stat-change.negative {
+            color: #f87171;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease 0.5s;
+            animation-fill-mode: both;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+        }
+
+        select {
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            font-size: 1em;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        select option {
+            background: #667eea;
+            color: white;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(102,126,234,0.5);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #10b981 100%);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            box-shadow: 0 5px 15px rgba(16,185,129,0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            box-shadow: 0 5px 15px rgba(239,68,68,0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            box-shadow: 0 5px 15px rgba(245,158,11,0.3);
+        }
+
+        .inventory-table {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease 0.6s;
+            animation-fill-mode: both;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, rgba(102,126,234,0.3) 0%, rgba(118,75,162,0.3) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        th {
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85em;
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 400;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease;
+            animation-fill-mode: both;
+        }
+
+        tbody tr:nth-child(1) { animation-delay: 0.1s; }
+        tbody tr:nth-child(2) { animation-delay: 0.2s; }
+        tbody tr:nth-child(3) { animation-delay: 0.3s; }
+        tbody tr:nth-child(4) { animation-delay: 0.4s; }
+        tbody tr:nth-child(5) { animation-delay: 0.5s; }
+        tbody tr:nth-child(6) { animation-delay: 0.6s; }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.01);
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .status-in-stock {
+            background: linear-gradient(135deg, #4ade80 0%, #10b981 100%);
+            color: white;
+        }
+
+        .status-low-stock {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+
+        .status-out-of-stock {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(107,114,128,0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .price-tag {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #4ade80;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📦 Inventory Management</h1>
-            <button class="btn btn-primary" onclick="openAddModal()">+ Add New Product</button>
+            <div class="logo-section">
+                <div class="logo-icon">📦</div>
+                <div>
+                    <h1>Inventory Pro</h1>
+                    <div class="subtitle">Smart Management System</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openAddModal()">
+                <span>✨ Add New Product</span>
+            </button>
         </header>
 
         <div class="stats">
             <div class="stat-card">
-                <h3>Total Products</h3>
+                <div class="stat-header">
+                    <h3>Total Products</h3>
+                    <div class="stat-icon">📊</div>
+                </div>
                 <div class="stat-value" id="totalProducts">0</div>
-            </div>
-            <div class="stat-card success">
-                <h3>Total Value</h3>
-                <div class="stat-value" id="totalValue">$0</div>
-            </div>
-            <div class="stat-card warning">
-                <h3>Low Stock Items</h3>
-                <div class="stat-value" id="lowStock">0</div>
+                <div class="stat-change positive">↗ Active inventory</div>
             </div>
             <div class="stat-card">
-                <h3>Categories</h3>
+                <div class="stat-header">
+                    <h3>Total Value</h3>
+                    <div class="stat-icon">💰</div>
+                </div>
+                <div class="stat-value" id="totalValue">$0</div>
+                <div class="stat-change positive">↗ Stock worth</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Low Stock Alert</h3>
+                    <div class="stat-icon">⚠️</div>
+                </div>
+                <div class="stat-value" id="lowStock">0</div>
+                <div class="stat-change">Items need restock</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <h3>Categories</h3>
+                    <div class="stat-icon">🏷️</div>
+                </div>
                 <div class="stat-value" id="totalCategories">0</div>
+                <div class="stat-change">Product types</div>
             </div>
         </div>
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search products..." oninput="filterInventory()">
+                <input type="text" id="searchInput" placeholder="Search products or SKU..." oninput="filterInventory()">
                 <span class="search-icon">🔍</span>
             </div>
             <select id="categoryFilter" onchange="filterInventory()">
@@ -75,33 +733,194 @@
             </div>
             <form id="productForm">
                 <div class="form-group">
-                    <label>Product Name</label>
-                    <input type="text" id="productName" required>
+                    <label>📝 Product Name</label>
+                    <input type="text" id="productName" required placeholder="Enter product name">
                 </div>
                 <div class="form-group">
-                    <label>SKU</label>
-                    <input type="text" id="productSKU" required>
+                    <label>🏷️ SKU</label>
+                    <input type="text" id="productSKU" required placeholder="e.g., WM-001">
                 </div>
                 <div class="form-group">
-                    <label>Category</label>
-                    <input type="text" id="productCategory" required>
+                    <label>📂 Category</label>
+                    <input type="text" id="productCategory" required placeholder="e.g., Electronics">
                 </div>
                 <div class="form-group">
-                    <label>Quantity</label>
-                    <input type="number" id="productQuantity" required min="0">
+                    <label>📦 Quantity</label>
+                    <input type="number" id="productQuantity" required min="0" placeholder="0">
                 </div>
                 <div class="form-group">
-                    <label>Price ($)</label>
-                    <input type="number" id="productPrice" required min="0" step="0.01">
+                    <label>💵 Price ($)</label>
+                    <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00">
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Product</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                        <span>Cancel</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span>💾 Save Product</span>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-   <script src="script.js"></script>
+    <script>
+        let inventory = [
+            { id: 1, name: 'Wireless Mouse Pro', sku: 'WM-001', category: 'Electronics', quantity: 45, price: 29.99 },
+            { id: 2, name: 'Mechanical Keyboard RGB', sku: 'MK-002', category: 'Electronics', quantity: 8, price: 89.99 },
+            { id: 3, name: 'USB-C Cable Premium', sku: 'UC-003', category: 'Accessories', quantity: 120, price: 12.99 },
+            { id: 4, name: 'Laptop Stand Aluminum', sku: 'LS-004', category: 'Furniture', quantity: 15, price: 45.00 },
+            { id: 5, name: 'Webcam HD 1080p', sku: 'WC-005', category: 'Electronics', quantity: 3, price: 79.99 },
+            { id: 6, name: 'Monitor 27" 4K', sku: 'MN-006', category: 'Electronics', quantity: 0, price: 299.99 },
+        ];
+
+        let editingId = null;
+
+        function renderInventory(items = inventory) {
+            const tbody = document.getElementById('inventoryBody');
+            
+            if (items.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 60px 20px;">
+                            <div style="font-size: 4em; margin-bottom: 20px; opacity: 0.5;">📭</div>
+                            <h3 style="font-size: 1.5em; margin-bottom: 10px;">No products found</h3>
+                            <p style="opacity: 0.7;">Try adjusting your filters or add a new product</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = items.map((item, index) => {
+                const status = getStatus(item.quantity);
+                return `
+                    <tr style="animation-delay: ${index * 0.1}s">
+                        <td class="product-name">${item.name}</td>
+                        <td>${item.sku}</td>
+                        <td>${item.category}</td>
+                        <td><strong>${item.quantity}</strong></td>
+                        <td class="price-tag">$${item.price.toFixed(2)}</td>
+                        <td><span class="status-badge status-${status.class}">${status.text}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-warning" onclick="editProduct(${item.id})"><span>✏️ Edit</span></button>
+                                <button class="btn btn-danger" onclick="deleteProduct(${item.id})"><span>🗑️ Delete</span></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatus(quantity) {
+            if (quantity === 0) return { class: 'out-of-stock', text: 'Out of Stock' };
+            if (quantity <= 10) return { class: 'low-stock', text: 'Low Stock' };
+            return { class: 'in-stock', text: 'In Stock' };
+        }
+
+        function updateStats() {
+            const totalProducts = inventory.length;
+            const totalValue = inventory.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const lowStock = inventory.filter(item => item.quantity > 0 && item.quantity <= 10).length;
+            const categories = [...new Set(inventory.map(item => item.category))].length;
+
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('totalValue').textContent = `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('lowStock').textContent = lowStock;
+            document.getElementById('totalCategories').textContent = categories;
+
+            const categoryFilter = document.getElementById('categoryFilter');
+            const currentValue = categoryFilter.value;
+            const uniqueCategories = [...new Set(inventory.map(item => item.category))];
+            categoryFilter.innerHTML = '<option value="">All Categories</option>' +
+                uniqueCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            categoryFilter.value = currentValue;
+        }
+
+        function filterInventory() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filtered = inventory.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchTerm) ||
+                                    item.sku.toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || item.category === categoryFilter;
+                const matchesStatus = !statusFilter || getStatus(item.quantity).class === statusFilter;
+
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            renderInventory(filtered);
+        }
+
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Product';
+            document.getElementById('productForm').reset();
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function editProduct(id) {
+            const product = inventory.find(item => item.id === id);
+            if (!product) return;
+
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Product';
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productSKU').value = product.sku;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productQuantity').value = product.quantity;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function deleteProduct(id) {
+            if (confirm('🗑️ Are you sure you want to delete this product?')) {
+                inventory = inventory.filter(item => item.id !== id);
+                updateStats();
+                renderInventory();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
+
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const product = {
+                name: document.getElementById('productName').value,
+                sku: document.getElementById('productSKU').value,
+                category: document.getElementById('productCategory').value,
+                quantity: parseInt(document.getElementById('productQuantity').value),
+                price: parseFloat(document.getElementById('productPrice').value)
+            };
+
+            if (editingId) {
+                const index = inventory.findIndex(item => item.id === editingId);
+                inventory[index] = { ...inventory[index], ...product };
+            } else {
+                product.id = Math.max(...inventory.map(i => i.id), 0) + 1;
+                inventory.push(product);
+            }
+
+            updateStats();
+            renderInventory();
+            closeModal();
+        });
+
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        updateStats();
+        renderInventory();
+    </script>
 </body>
 </html>
