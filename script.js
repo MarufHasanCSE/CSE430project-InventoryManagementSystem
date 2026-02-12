@@ -1,11 +1,11 @@
 
         let inventory = [
-            { id: 1, name: 'Wireless Mouse', sku: 'WM-001', category: 'Electronics', quantity: 45, price: 29.99 },
-            { id: 2, name: 'Mechanical Keyboard', sku: 'MK-002', category: 'Electronics', quantity: 8, price: 89.99 },
-            { id: 3, name: 'USB-C Cable', sku: 'UC-003', category: 'Accessories', quantity: 120, price: 12.99 },
-            { id: 4, name: 'Laptop Stand', sku: 'LS-004', category: 'Furniture', quantity: 15, price: 45.00 },
-            { id: 5, name: 'Webcam HD', sku: 'WC-005', category: 'Electronics', quantity: 3, price: 79.99 },
-            { id: 6, name: 'Monitor 27"', sku: 'MN-006', category: 'Electronics', quantity: 0, price: 299.99 },
+            { id: 1, name: 'Wireless Mouse Pro', sku: 'WM-001', category: 'Electronics', quantity: 45, price: 29.99 },
+            { id: 2, name: 'Mechanical Keyboard RGB', sku: 'MK-002', category: 'Electronics', quantity: 8, price: 89.99 },
+            { id: 3, name: 'USB-C Cable Premium', sku: 'UC-003', category: 'Accessories', quantity: 120, price: 12.99 },
+            { id: 4, name: 'Laptop Stand Aluminum', sku: 'LS-004', category: 'Furniture', quantity: 15, price: 45.00 },
+            { id: 5, name: 'Webcam HD 1080p', sku: 'WC-005', category: 'Electronics', quantity: 3, price: 79.99 },
+            { id: 6, name: 'Monitor 27" 4K', sku: 'MN-006', category: 'Electronics', quantity: 0, price: 299.99 },
         ];
 
         let editingId = null;
@@ -16,29 +16,31 @@
             if (items.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="empty-state">
-                            <div>📦</div>
-                            <h3>No products found</h3>
-                            <p>Try adjusting your filters or add a new product</p>
+                        <td colspan="7" style="text-align: center; padding: 60px 20px;">
+                            <div style="font-size: 4em; margin-bottom: 20px; opacity: 0.5;">📭</div>
+                            <h3 style="font-size: 1.5em; margin-bottom: 10px;">No products found</h3>
+                            <p style="opacity: 0.7;">Try adjusting your filters or add a new product</p>
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = items.map(item => {
+            tbody.innerHTML = items.map((item, index) => {
                 const status = getStatus(item.quantity);
                 return `
-                    <tr>
-                        <td><strong>${item.name}</strong></td>
+                    <tr style="animation-delay: ${index * 0.1}s">
+                        <td class="product-name">${item.name}</td>
                         <td>${item.sku}</td>
                         <td>${item.category}</td>
-                        <td>${item.quantity}</td>
-                        <td>$${item.price.toFixed(2)}</td>
+                        <td><strong>${item.quantity}</strong></td>
+                        <td class="price-tag">$${item.price.toFixed(2)}</td>
                         <td><span class="status-badge status-${status.class}">${status.text}</span></td>
                         <td>
-                            <button class="btn btn-warning" onclick="editProduct(${item.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteProduct(${item.id})">Delete</button>
+                            <div class="action-buttons">
+                                <button class="btn btn-warning" onclick="editProduct(${item.id})"><span>✏️ Edit</span></button>
+                                <button class="btn btn-danger" onclick="deleteProduct(${item.id})"><span>🗑️ Delete</span></button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -58,11 +60,10 @@
             const categories = [...new Set(inventory.map(item => item.category))].length;
 
             document.getElementById('totalProducts').textContent = totalProducts;
-            document.getElementById('totalValue').textContent = `$${totalValue.toFixed(2)}`;
+            document.getElementById('totalValue').textContent = `$${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('lowStock').textContent = lowStock;
             document.getElementById('totalCategories').textContent = categories;
 
-            // Update category filter
             const categoryFilter = document.getElementById('categoryFilter');
             const currentValue = categoryFilter.value;
             const uniqueCategories = [...new Set(inventory.map(item => item.category))];
@@ -110,7 +111,7 @@
         }
 
         function deleteProduct(id) {
-            if (confirm('Are you sure you want to delete this product?')) {
+            if (confirm('🗑️ Are you sure you want to delete this product?')) {
                 inventory = inventory.filter(item => item.id !== id);
                 updateStats();
                 renderInventory();
@@ -145,7 +146,6 @@
             closeModal();
         });
 
-        // Close modal when clicking outside
         document.getElementById('productModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
@@ -155,4 +155,3 @@
         // Initialize
         updateStats();
         renderInventory();
-  
